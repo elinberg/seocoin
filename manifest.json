@@ -1,0 +1,42 @@
+{
+	"name": "SEO Coin",
+	"version": "1.6",
+    "manifest_version": 2,
+	"description": "SEOCoin.com Distributed",
+	"permissions": [
+		"history",
+		"tabs",
+		"webNavigation",
+		"identity"
+	],
+	"background": {
+		"page": "background.html",
+		"persistent": false
+	},
+	"browser_action": {
+		"default_popup": "seo.html",
+		"default_icon": "seocoin.png"
+	},
+	"content_scripts": [{
+		"run_at": "document_end",
+		"matches": [
+			"<all_urls>"
+		],
+		"web_accessible_resources": [],
+		"js": [
+			"js/seo.js",
+			"js/firebase-app.js",
+			"js/firebase-auth.js",
+			"js/firebase-database.js"
+		]
+	}],
+	"content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'",
+	"oauth2": {
+		"client_id": "48401323055-8phhqjvuphgt9ma9ftfuklju30gvsqkd.apps.googleusercontent.com",
+		"scopes": [
+			"https://www.googleapis.com/auth/userinfo.email",
+			"https://www.googleapis.com/auth/userinfo.profile"
+		]
+	},
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAls013cjWLdnPubPwAaFKnHdjJty0j/nWyMwChogy+Gj1EK5IkMKS1nmFSFkYGpItlMXamYw6cRLguuC3+vrSF1txqfzSIMAoA3F3ryArFkLza1NyQhtbaQcbVb+SeeJ1Snft+shJaY1huGkqV1kw3nr65Rh6A8I7GK7dCuQf9VLpOT2zcghTS9i+JrsL7R2V38daT6t7XYukj8uPvojl+fGvfP9FXsazkceM0VpNOzYcTJfFda92cqcSfRbUjaJTO2XsF1bf6qo6rWRfmSkcTXOFOGTFAQLL9lmcuup4563Oadvv6UvOzLkqO+OiagW0LjjNB+uDTgbiobr8DautFQIDAQAB"
+}
