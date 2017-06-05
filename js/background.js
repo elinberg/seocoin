@@ -43,7 +43,7 @@ function initApp () {
             //console.log(auth)
             console.log(state)
 
-            var visited = firebase.database().ref('urls/')
+            var visited = firebase.database().ref('history/')
             visited.push({
               email: auth.email,
               lastVisitTime: state.lastVisitTime,
