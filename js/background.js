@@ -19,12 +19,68 @@ firebase.initializeApp(config)
  *
  * When signed in, we also authenticate to the Firebase Realtime Database.
  */
-function initApp () {
-  // Listen for auth state changes.
-  var auth
-  firebase.auth().onAuthStateChanged(function (user) {
-    console.log('User state change detected from the Background script of the Chrome Extension:', user)
+function initApp() {
 
+
+
+//=============== background.js =================
+chrome.runtime.onInstalled.addListener(function (details) {
+  try {
+    var thisVersion = chrome.runtime.getManifest().version;
+    if (details.reason == "install") {
+      console.info("First version installed");
+      //Send message to popup.html and notify/alert user("Welcome")
+    } else if (details.reason == "update") {
+      console.info("Updated version: " + thisVersion);
+      //Send message to popup.html and notify/alert user
+
+      chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+        for( var i = 0; i < tabs.length; i++ ) {
+            chrome.tabs.sendMessage(tabs[i].id, {name: "showPopupOnUpdated", version: thisVersion});
+        }
+        });
+    }
+  } catch(e) {
+    console.info("OnInstall Error - " + e);
+  }
+});
+  // Listen for auth state changes.
+  var auth, currentUID
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user && currentUID === user.uid) {
+      return;
+    }
+    console.log('User state change detected from the Background script of the Chrome Extension:', user)
+    if (user) {
+      if (!user.displayName || !user.photoURL) {
+        var displayName;
+        var profilePic;
+        user.providerData.forEach(function (profile) {
+          console.log("Sign-in provider: " + profile.providerId);
+          console.log("  Provider-specific UID: " + profile.uid);
+          console.log("  Name: " + profile.displayName);
+          displayName = profile.displayName;
+          profilePic = profile.photoURL;
+          console.log("  Email: " + profile.email);
+          console.log("  Photo URL: " + profile.photoURL);
+        });
+
+
+        user.updateProfile({ displayName: displayName, photoURL: profilePic }).then(
+          function () {
+            console.log(displayName);
+          }, function (error) {
+            console.log(error);
+          });
+      };
+
+      currentUID = user.uid;
+
+    } else {
+      // Set currentUID to null.
+      currentUID = null;
+
+    }
     auth = user
   })
 
@@ -38,7 +94,7 @@ function initApp () {
           state = state2
         })
 
-        if (typeof state !== 'undefined' && auth || false ) {
+        if (typeof state !== 'undefined' && auth || false) {
           if (auth.emailVerified || false) {
             //console.log(auth)
             console.log(state)
@@ -49,14 +105,17 @@ function initApp () {
               lastVisitTime: state.lastVisitTime,
               title: state.title,
               typedCount: state.typedCount,
-              url: state.url
+              url: state.url,
+              author: auth.displayName,
+              authorPic: auth.photoURL
             })
           }
         }
-        sendResponse({data: state})
+        sendResponse({ data: state })
 
       }
     })
+
 }
 
 window.onload = function () {

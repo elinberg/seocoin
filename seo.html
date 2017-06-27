@@ -1,44 +1,161 @@
-
 <!DOCTYPE html>
-<!--
-Copyright (c) 2016 Google Inc.
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-<html>
+<html lang="en">
+
 <head>
-  <meta charset=utf-8 />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Demonstrates the use of Google Cloud Database with a Firebase DB">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Sign In in Chrome Extensions Example</title>
+  <title>SEOCoin Google Sign-in</title>
+  <!-- Disable tap highlight on IE -->
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="SEOCoin Administration">
+  <meta name="theme-color" content="#303F9F">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SEOCoin Administration">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#303F9F">
+
+  <!-- Tile icon for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
+  <meta name="msapplication-navbutton-color" content="#303F9F">
+
+  <!-- Material Design Lite -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="http://code.getmdl.io/1.1.3/material.blue_grey-orange.min.css">
+
 
   <link rel="stylesheet" href="css/main.css">
-
-  <!-- ***************************************************************************************
-       * TODO(DEVELOPER): Make sure you are importing the latest version of the Firebase JS. *
-       *************************************************************************************** -->
+  <link rel="stylesheet" href="css/mdc.list.css">
+  <link rel="stylesheet" href="css/list.css">
   <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js"></script>
-  <script src="js/credential.js"></script>
+  <script src="js/material.min.js"></script>
   <script src='js/seo.js'></script>
+  <script src="js/credential.js"></script>
 </head>
-<body>
-  <h3>Firebase Authentication</h3>
 
-  <div class="quickstart-user-details-container">
-    <button id="quickstart-button">Sign-in with Google</button>
-    <p>
-      Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
-      <div>Firebase auth <code>currentUser</code> object value:</div>
-      <pre><code id="quickstart-account-details">null</code></pre>
-    </p>
-  </div>
+<body>
+  <section style="" id="page-splash">
+    <section class="hero">
+      <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+          <header class="mdl-layout__header">
+            <!-- Splash screen -->
+          </header>
+        </div>
+        <!--<div style="overflow-y:auto;background-color:rgba(0, 0, 0, .26);margin-top:100px;max-height:460px;">-->
+        <!--<ul id="inbox" class="mdc-list mdc-list--two-line mdc-list--avatar-list two-line-avatar-text-icon-demo"></ul>-->
+        <div style="height:150px;width:100%;margin-top:100px;"></div>
+        <table id="inbox" style="width:350px;max-height:460px;" class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+          <thead>
+            <tr>
+              <th colspan="2" class="mdl-data-table__cell--non-numeric">Keyword </th>
+              <!--<th class="mdl-data-table__cell--non-numeric">Prospector</th>-->
+              <th class="">Author</th>
+            </tr>
+          </thead>
+          <tbody style="overflow-y:scroll;display:block;max-height:480px;">
+            <tr id="template" style="display:none;">
+              <td colspan="2" width="" style="text-overflow:ellipsis;text-align:left;white-space:normal;" class="mdl-data-table__cell--non-numeric"></td>
+              <!--<td class="mdl-data-table__cell--non-numeric"></td>-->
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Overlay for fixed sidebar -->
+        <div class="sidebar-overlay"></div>
+
+        <!-- Material sidebar -->
+        <aside id="sidebar" class="sidebar sidebar-default" role="navigation">
+          <!-- Sidebar header -->
+          <div class="sidebar-header header-cover" style="background-image: url(https://2.bp.blogspot.com/-2RewSLZUzRg/U-9o6SD4M6I/AAAAAAAADIE/voax99AbRx0/s1600/14%2B-%2B1%2B%281%29.jpg);">
+            <!-- Top bar -->
+            <div class="top-bar"></div>
+            <!-- Sidebar toggle button -->
+            <button type="button" class="sidebar-toggle">
+            <i class="icon-material-sidebar-arrow"></i>
+        </button>
+            <!-- Sidebar brand image -->
+            <div class="sidebar-image">
+              <img id="profilePic" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/53474/atom_profile_03.jpg">
+            </div>
+            <!-- Sidebar brand name -->
+            <a data-toggle="dropdown" class="sidebar-brand" href="#settings-dropdown">
+            <span id="email">john@doe.com</span>
+            <b class="caret"></b>
+    </a>
+
+          </div>
+          <ul>
+            <li>
+              <div class="text">Open a new Chrome Browser and <br>search for the following keyword Phrase</div>
+            </li>
+            <li>
+              <div id="keywords" class="panel">Keyword Phrase</div>
+            </li>
+            <li>
+              <div class="text">Find the following website</div>
+            </li>
+            <li>
+              <div id="address" class="panel">Address</div>
+            </li>
+            <li>
+              <div id="address" class="panel">Address</div>
+            </li>
+          </ul>
+          <!-- Sidebar navigation -->
+
+
+        </aside>
+
+
+    </section>
+
+    <h3 class="logo">SEO Coin Log-in</h3>
+    <div>
+      <button id="sign-in-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in with Google</button>
+    </div>
+  </section>
+
+  <!-- Header section containing logo and menu -->
+  <header class="header mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+
+
+    <div class="mdl-layout__header-row titlebar">
+      <h3 class="logo">SEOCoin Login</h3>
+
+      <button id="sign-out-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign out</button>
+    </div>
+    <!-- Navigation Bar -->
+    <div class="tab mdl-layout__header-row mdl-color--light-blue-600">
+      <div class="mdl-tab">
+        <div id="menu-recent" class="mdl-layout__tab is-active mdl-button mdl-js-button mdl-js-ripple-effect">
+          <i class="material-icons">new_releases</i> Recent
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <!-- Show a list of recent posts -->
+    <section class="mdl-grid content" id="recent-posts-list" style="display:none">
+
+      <div class="quickstart-user-details-container">
+
+        <button id="quickstart-button">Sign-in with Google</button>
+        <p>
+          SEO Base sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
+          <div>Firebase auth <code>currentUser</code> object value:</div>
+          <pre><code id="quickstart-account-details">null</code></pre>
+        </p>
+      </div>
+      </div>
+    </section>
+
 </body>
+
 </html>
-Contact GitHub API Training Shop Blog About
-© 2017 GitHub, Inc. Terms Privacy Security Status Help

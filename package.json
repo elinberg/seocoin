@@ -1,0 +1,24 @@
+{
+  "name": "seocoin",
+  "version": "2.2.0",
+  "description": "SEOCoin Extension",
+  "main": "js/popup.js",
+  "dependencies": {
+    "@material/list": "^0.2.9",
+    "material-components-web": "^0.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elinberg/seocoin.git"
+  },
+  "author": "Eric Linberg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elinberg/seocoin/issues"
+  },
+  "homepage": "https://github.com/elinberg/seocoin#readme"
+}
