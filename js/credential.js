@@ -43,6 +43,8 @@ function initApp() {
       document.getElementById('sign-in-button').textContent = 'Sign out';
       document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
       document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+      document.getElementById('email').textContent = email;
+      document.getElementById('profilePic').setAttribute('src', photoURL);
 
       // [END_EXCLUDE]
 
@@ -119,6 +121,8 @@ function startDatabaseQueries() {
       var author = data.val().author || 'Anonymous';
       console.log(firebase.database.ServerValue.TIMESTAMP);
 
+      var cookieId = readCookie('seocoin.id');
+
       sectionElement.appendChild(
         createListItem(data.key, data.val().title, data.val().keyword, author, data.val().uid, data.val().authorPic, data.val().destination_url, data.val().clickon, data.val().comment)
       );
@@ -138,6 +142,7 @@ function startDatabaseQueries() {
       var sidebar = document.getElementById('sidebar');
       var sidebarToggle = document.getElementsByClassName('sidebar-toggle')[0];
       var inbox = document.getElementById('inbox');
+
       sidebarToggle.addEventListener('click', function (e) {
 
         inbox.className = inbox.className.replace(/\b hide\b/, '');
@@ -145,7 +150,6 @@ function startDatabaseQueries() {
         sidebar.className = sidebar.className.replace(/\b open\b/, '');
 
       });
-
 
       check.addEventListener('change', function (e) {
 
@@ -156,13 +160,14 @@ function startDatabaseQueries() {
           sidebar.className = sidebarOverlay.className.replace(/\b open\b/, '');
           inbox.className = inbox.className.replace(/\b hide\b/, '');
 
-
         } else {
 
           this.className = this.className.replace(/\b is-checked\b/, '');
           //this.className += " is-checked";
           createCookie('seocoin.id', data.key, 7);
 
+          document.querySelector('#keywords').textContent = data.val().keyword;
+          document.querySelector('#address').textContent = data.val().destination_url;
 
           sidebar.className = sidebar.className.replace(/\b open\b/, '') + ' open';
           inbox.className = inbox.className.replace(/\b hide\b/, '');
@@ -172,6 +177,10 @@ function startDatabaseQueries() {
 
       });
 
+      if (cookieId == data.key) {
+        check.dispatchEvent(new Event('change'));
+        console.log('Found open post: ' + data.key);
+      }
 
     });
     postsRef.on('child_changed', function (data) {

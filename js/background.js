@@ -6,6 +6,49 @@ var config = {
 firebase.initializeApp(config)
 
 /**
+ * This is currently duplicate code (it also appears in credential.js)
+ * This function and other cookie functions should be put in their own file
+ * at some point...
+ */
+function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+function readSearchQuery(url) {
+  url = url.split('?');
+
+  var query = url[1];
+  var params = {};
+
+  url = url[0];
+
+  if (query === undefined || url.match(/www.google.com/) === undefined) {
+    return null;
+  }
+
+  query = query.split('&');
+
+  query.forEach(function(elem) {
+    elem = elem.split('=');
+
+    params[elem[0]] = elem[1];
+  });
+
+  if (params.q === undefined) {
+    return null;
+  }
+
+  return params.q.replace(/\+/, ' ').toLowerCase();
+}
+
+/**
  * initApp handles setting up the Firebase context and registering
  * callbacks for the auth status.
  *
@@ -99,16 +142,42 @@ chrome.runtime.onInstalled.addListener(function (details) {
             //console.log(auth)
             console.log(state)
 
-            var visited = firebase.database().ref('history/')
-            visited.push({
-              email: auth.email,
-              lastVisitTime: state.lastVisitTime,
-              title: state.title,
-              typedCount: state.typedCount,
-              url: state.url,
-              author: auth.displayName,
-              authorPic: auth.photoURL
-            })
+            // var visited = firebase.database().ref('history/')
+            // visited.push({
+            //   email: auth.email,
+            //   lastVisitTime: state.lastVisitTime,
+            //   title: state.title,
+            //   typedCount: state.typedCount,
+            //   url: state.url,
+            //   author: auth.displayName,
+            //   authorPic: auth.photoURL
+            // });
+
+            var postId = readCookie('seocoin.id')
+            if (!!postId.length) {
+              var db = firebase.database();
+              var currentPost = db.ref('posts/' + postId);
+              var comments = db.ref('post_comments/' + postId)
+
+              currentPost.once('value', function (data) {
+                console.log(data.val());
+                var isAtDestination = state.url == data.val().destination_url;
+                var isAtSearchQuery = readSearchQuery(state.url) == data.val().keyword.toLowerCase();
+
+                if (isAtDestination || isAtSearchQuery) {
+                  console.log('Pushing state');
+                  comments.push({
+                    email: auth.email,
+                    lastVisitTime: state.lastVisitTime,
+                    title: state.title,
+                    typedCount: state.typedCount,
+                    url: state.url,
+                    author: auth.displayName,
+                    authorPic: auth.photoURL
+                  });
+                }
+              })
+            }
           }
         }
         sendResponse({ data: state })
