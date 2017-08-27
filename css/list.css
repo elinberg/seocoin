@@ -1000,7 +1000,9 @@ body {
 }
 
 .text{
+  margin: 5px auto;
   padding-right: 50px;
   color:black;
   font-size: 12px;
+  line-height: 120%;
 }
